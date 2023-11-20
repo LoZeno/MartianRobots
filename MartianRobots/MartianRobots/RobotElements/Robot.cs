@@ -12,6 +12,7 @@ public class Robot(MarsGrid marsGrid, int x, int y, Orientation orientation)
 
     public void Command(Command command)
     {
+        if (IsLost) return;
         switch (command)
         {
             case Domain.Command.L:

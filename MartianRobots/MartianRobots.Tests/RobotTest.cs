@@ -5,33 +5,35 @@ namespace MartianRobots.Tests;
 
 public class RobotTest
 {
-    private readonly MarsGrid _grid = new(6, 6);
+    private readonly MarsGrid _grid = new(5, 5);
 
     [Theory]
     [InlineData(Orientation.S, Orientation.E)]
     [InlineData(Orientation.E, Orientation.N)]
     [InlineData(Orientation.W, Orientation.S)]
     [InlineData(Orientation.N, Orientation.W)]
-    public void WhenTurningLeft_OrientationIs90DegreesLeft(Orientation initialOrientation, Orientation expectedOrientation)
+    public void WhenTurningLeft_OrientationIs90DegreesLeft(Orientation initialOrientation,
+        Orientation expectedOrientation)
     {
-        var robot = new RobotElements.Robot(_grid, 0, 0, initialOrientation);
+        var robot = new Robot(_grid, 0, 0, initialOrientation);
 
         robot.Command(Command.L);
-        
+
         Assert.Equal(expectedOrientation, robot.Orientation);
     }
-    
+
     [Theory]
     [InlineData(Orientation.S, Orientation.W)]
     [InlineData(Orientation.E, Orientation.S)]
     [InlineData(Orientation.W, Orientation.N)]
     [InlineData(Orientation.N, Orientation.E)]
-    public void WhenTurningRight_OrientationIs90DegreesRight(Orientation initialOrientation, Orientation expectedOrientation)
+    public void WhenTurningRight_OrientationIs90DegreesRight(Orientation initialOrientation,
+        Orientation expectedOrientation)
     {
-        var robot = new RobotElements.Robot(_grid, 0, 0, initialOrientation);
+        var robot = new Robot(_grid, 0, 0, initialOrientation);
 
         robot.Command(Command.R);
-        
+
         Assert.Equal(expectedOrientation, robot.Orientation);
     }
 
@@ -44,12 +46,13 @@ public class RobotTest
     [InlineData(2, 2, Orientation.E, 3, 2)]
     [InlineData(3, 3, Orientation.S, 3, 2)]
     [InlineData(3, 3, Orientation.W, 2, 3)]
-    public void WhenMovingForward_RobotPositionIsOneCellInDirectionOfOrientation(int initialX, int initialY, Orientation initialOrientation, int expectedX, int expectedY)
+    public void WhenMovingForward_RobotPositionIsOneCellInDirectionOfOrientation(int initialX, int initialY,
+        Orientation initialOrientation, int expectedX, int expectedY)
     {
-        var robot = new RobotElements.Robot(_grid, initialX, initialY, initialOrientation);
-        
+        var robot = new Robot(_grid, initialX, initialY, initialOrientation);
+
         robot.Command(Command.F);
-        
+
         Assert.Equal(expectedX, robot.X);
         Assert.Equal(expectedY, robot.Y);
     }
@@ -61,10 +64,26 @@ public class RobotTest
     [InlineData(0, 3, Orientation.W)]
     public void WhenMovingOffGrid_RobotIsLostAndLeavesScent(int initialX, int initialY, Orientation initialOrientation)
     {
-        var robot = new RobotElements.Robot(_grid, initialX, initialY, initialOrientation);
+        var robot = new Robot(_grid, initialX, initialY, initialOrientation);
         robot.Command(Command.F);
-        
+
         Assert.True(robot.IsLost);
         Assert.True(_grid.HasScent(initialX, initialY));
+    }
+
+    [Theory]
+    [InlineData(Command.F)]
+    [InlineData(Command.L)]
+    [InlineData(Command.R)]
+    public void WhenRobotOffGrid_DoesNotMove(Command command)
+    {
+        var robot = new Robot(_grid, 3, 5, Orientation.N);
+        robot.Command(Command.F);
+        
+        robot.Command(command);
+        Assert.True(robot.IsLost);
+        Assert.Equal(3, robot.X);
+        Assert.Equal(5, robot.Y);
+        Assert.Equal(Orientation.N, robot.Orientation);
     }
 }

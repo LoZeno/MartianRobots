@@ -1,8 +1,8 @@
 ﻿namespace MartianRobots.RobotElements;
 
-public class MarsGrid(int width, int height)
+public class MarsGrid(int maxX, int maxY)
 {
-    private readonly bool[,] _grid = new bool[width, height];
+    private readonly bool[,] _grid = new bool[maxX+1, maxY+1];
 
     public bool HasScent(int x, int y)
     {

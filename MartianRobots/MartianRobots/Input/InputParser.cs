@@ -34,7 +34,13 @@ public class InputParser
                 _robot.Command(Enum.Parse<Command>(command.ToString()));
             }
 
-            Output = $"{_robot.X} {_robot.Y} {_robot.Orientation}";
+            Output += $"{_robot.X} {_robot.Y} {_robot.Orientation}";
+            if (_robot.IsLost)
+            {
+                Output += " LOST";
+            }
+
+            Output += Environment.NewLine;
             _robot = null;
         }
     }
