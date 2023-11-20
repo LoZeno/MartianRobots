@@ -1,4 +1,4 @@
-﻿namespace MartianRobots.Robot;
+﻿namespace MartianRobots.RobotElements;
 
 public class MarsGrid(int width, int height)
 {

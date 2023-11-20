@@ -1,9 +1,12 @@
 using MartianRobots.Domain;
+using MartianRobots.RobotElements;
 
 namespace MartianRobots.Tests;
 
 public class RobotTest
 {
+    private readonly MarsGrid _grid = new(6, 6);
+
     [Theory]
     [InlineData(Orientation.S, Orientation.E)]
     [InlineData(Orientation.E, Orientation.N)]
@@ -11,7 +14,7 @@ public class RobotTest
     [InlineData(Orientation.N, Orientation.W)]
     public void WhenTurningLeft_OrientationIs90DegreesLeft(Orientation initialOrientation, Orientation expectedOrientation)
     {
-        var robot = new Robot.Robot(0, 0, initialOrientation);
+        var robot = new RobotElements.Robot(_grid, 0, 0, initialOrientation);
 
         robot.Command(Command.L);
         
@@ -25,7 +28,7 @@ public class RobotTest
     [InlineData(Orientation.N, Orientation.E)]
     public void WhenTurningRight_OrientationIs90DegreesRight(Orientation initialOrientation, Orientation expectedOrientation)
     {
-        var robot = new Robot.Robot(0, 0, initialOrientation);
+        var robot = new RobotElements.Robot(_grid, 0, 0, initialOrientation);
 
         robot.Command(Command.R);
         
@@ -43,11 +46,25 @@ public class RobotTest
     [InlineData(3, 3, Orientation.W, 2, 3)]
     public void WhenMovingForward_RobotPositionIsOneCellInDirectionOfOrientation(int initialX, int initialY, Orientation initialOrientation, int expectedX, int expectedY)
     {
-        var robot = new Robot.Robot(initialX, initialY, initialOrientation);
+        var robot = new RobotElements.Robot(_grid, initialX, initialY, initialOrientation);
         
         robot.Command(Command.F);
         
         Assert.Equal(expectedX, robot.X);
         Assert.Equal(expectedY, robot.Y);
+    }
+
+    [Theory]
+    [InlineData(5, 3, Orientation.E)]
+    [InlineData(3, 5, Orientation.N)]
+    [InlineData(3, 0, Orientation.S)]
+    [InlineData(0, 3, Orientation.W)]
+    public void WhenMovingOffGrid_RobotIsLostAndLeavesScent(int initialX, int initialY, Orientation initialOrientation)
+    {
+        var robot = new RobotElements.Robot(_grid, initialX, initialY, initialOrientation);
+        robot.Command(Command.F);
+        
+        Assert.True(robot.IsLost);
+        Assert.True(_grid.HasScent(initialX, initialY));
     }
 }
