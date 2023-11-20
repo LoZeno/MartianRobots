@@ -58,17 +58,17 @@ public class RobotTest
     }
 
     [Theory]
-    [InlineData(5, 3, Orientation.E)]
-    [InlineData(3, 5, Orientation.N)]
-    [InlineData(3, 0, Orientation.S)]
-    [InlineData(0, 3, Orientation.W)]
-    public void WhenMovingOffGrid_RobotIsLostAndLeavesScent(int initialX, int initialY, Orientation initialOrientation)
+    [InlineData(5, 3, Orientation.E, 6, 3)]
+    [InlineData(3, 5, Orientation.N, 3, 6)]
+    [InlineData(3, 0, Orientation.S, 3, -1)]
+    [InlineData(0, 3, Orientation.W, -1, 3)]
+    public void WhenMovingOffGrid_RobotIsLostAndLeavesScent(int initialX, int initialY, Orientation initialOrientation, int destinationX, int destinationY)
     {
         var robot = new Robot(_grid, initialX, initialY, initialOrientation);
         robot.Command(Command.F);
 
         Assert.True(robot.IsLost);
-        Assert.True(_grid.HasScent(initialX, initialY));
+        Assert.True(_grid.HasScent(initialX, initialY, destinationX, destinationY));
     }
 
     [Theory]
@@ -85,5 +85,29 @@ public class RobotTest
         Assert.Equal(3, robot.X);
         Assert.Equal(5, robot.Y);
         Assert.Equal(Orientation.N, robot.Orientation);
+    }
+
+    [Fact]
+    public void WhenCellHasScent_AndRobotIsHeadedOffGrid_RobotIsStopped()
+    {
+        _grid.MarkCell(2,5);
+        var robot = new Robot(_grid, 2, 5, Orientation.N);
+        robot.Command(Command.F);
+        
+        Assert.False(robot.IsLost);
+        Assert.Equal(2, robot.X);
+        Assert.Equal(5, robot.Y);
+    }
+
+    [Fact]
+    public void WhenCellHasScent_AndRobotIsNotHeadedOffGrid_RobotMoves()
+    {
+        _grid.MarkCell(2,5);
+        var robot = new Robot(_grid, 2, 5, Orientation.E);
+        robot.Command(Command.F);
+        
+        Assert.False(robot.IsLost);
+        Assert.Equal(3, robot.X);
+        Assert.Equal(5, robot.Y);
     }
 }

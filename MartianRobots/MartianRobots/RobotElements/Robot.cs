@@ -54,17 +54,18 @@ public class Robot(MarsGrid marsGrid, int x, int y, Orientation orientation)
                 break;
         }
 
-        try
+        if (marsGrid.HasScent(X, Y, nextX, nextY))
         {
-            if (marsGrid.HasScent(nextX, nextY))
-                return;
-            X = nextX;
-            Y = nextY;
+            return;
         }
-        catch (IndexOutOfRangeException)
+
+        if (marsGrid.IsOutOfBound(nextX, nextY))
         {
-            IsLost = true;
             marsGrid.MarkCell(X, Y);
+            IsLost = true;
+            return;
         }
+        X = nextX;
+        Y = nextY;
     }
 }
