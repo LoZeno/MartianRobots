@@ -31,4 +31,23 @@ public class RobotTest
         
         Assert.Equal(expectedOrientation, robot.Orientation);
     }
+
+    [Theory]
+    [InlineData(0, 0, Orientation.N, 0, 1)]
+    [InlineData(0, 0, Orientation.E, 1, 0)]
+    [InlineData(1, 1, Orientation.S, 1, 0)]
+    [InlineData(1, 1, Orientation.W, 0, 1)]
+    [InlineData(2, 2, Orientation.N, 2, 3)]
+    [InlineData(2, 2, Orientation.E, 3, 2)]
+    [InlineData(3, 3, Orientation.S, 3, 2)]
+    [InlineData(3, 3, Orientation.W, 2, 3)]
+    public void WhenMovingForward_RobotPositionIsOneCellInDirectionOfOrientation(int initialX, int initialY, Orientation initialOrientation, int expectedX, int expectedY)
+    {
+        var robot = new Robot.Robot(initialX, initialY, initialOrientation);
+        
+        robot.Command(Command.F);
+        
+        Assert.Equal(expectedX, robot.X);
+        Assert.Equal(expectedY, robot.Y);
+    }
 }

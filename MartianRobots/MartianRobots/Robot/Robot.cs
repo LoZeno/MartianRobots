@@ -2,36 +2,49 @@
 
 namespace MartianRobots.Robot;
 
-public class Robot
+public class Robot(int x, int y, Orientation orientation)
 {
-    private Orientation _orientation;
+    public Orientation Orientation { get; private set; } = orientation;
 
-    public Robot(int x, int y, Orientation orientation)
-    {
-        _orientation = orientation;
-    }
-
-    public Orientation Orientation => _orientation;
+    public int X { get; private set; } = x;
+    public int Y { get; private set; } = y;
 
     public void Command(Command command)
     {
         switch (command)
         {
             case Domain.Command.L:
-                _orientation -= 1;
+                Orientation -= 1;
                 break;
             case Domain.Command.R:
-                _orientation++;
+                Orientation++;
                 break;
             case Domain.Command.F:
+                switch (Orientation)
+                {
+                    case Orientation.N:
+                        Y++;
+                        break;
+                    case Orientation.E:
+                        X++;
+                        break;
+                    case Orientation.S:
+                        Y--;
+                        break;
+                    case Orientation.W:
+                        X--;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(command), command, null);
         }
 
-        if (_orientation < Orientation.N)
-            _orientation = Orientation.W;
-        if (_orientation > Orientation.W)
-            _orientation = Orientation.N;
+        if (Orientation < Orientation.N)
+            Orientation = Orientation.W;
+        if (Orientation > Orientation.W)
+            Orientation = Orientation.N;
     }
 }
